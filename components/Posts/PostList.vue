@@ -1,25 +1,13 @@
 <template>
   <section class="posts-list">
     <PostPreview
-      id="1"
+      v-for="post in posts"
+      :key="post.id"
+      :id="post.id"
       :is-admin="isAdmin"
-      thumbnail="/Shutter.Island.jpg"
-      title="Hello there!"
-      previewText="This is my first post!"
-    />
-    <PostPreview
-      id="2"
-      :is-admin="isAdmin"
-      thumbnail="/Shutter.Island.jpg"
-      title="Hello there - the second time!"
-      previewText="This is my second post!"
-    />
-    <PostPreview
-      id="3"
-      :is-admin="isAdmin"
-      thumbnail="/Shutter.Island.jpg"
-      title="Hello there - the third time!"
-      previewText="This is my third post!"
+      :thumbnail="post.thumbnail"
+      :title="post.title"
+      :previewText="post.previewText"
     />
   </section>
 </template>
@@ -36,6 +24,10 @@ export default Vue.extend({
     isAdmin: {
       type: Boolean,
       default: false,
+    },
+    posts: {
+      type: Array,
+      required: true,
     },
   },
 });
