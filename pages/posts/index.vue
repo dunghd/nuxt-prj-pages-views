@@ -1,18 +1,22 @@
 <template>
   <div class="posts-page">
-    <PostList />
+    <PostList :posts="loadedPosts" />
   </div>
 </template>
 
-<script lang="ts">
-import Vue from "vue";
+<script>
 import PostList from "@/components/Posts/PostList.vue";
 
-export default Vue.extend({
+export default {
   components: {
     PostList,
   },
-});
+  computed: {
+    loadedPosts() {
+      return this.$store.getters.loadedPosts;
+    },
+  },
+};
 </script>
 
 <style scoped>

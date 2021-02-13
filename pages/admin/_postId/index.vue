@@ -7,6 +7,7 @@
 </template>
 
 <script>
+import axios from "axios";
 import AdminPostForm from "@/components/Admin/AdminPostForm.vue";
 
 export default {
@@ -14,15 +15,17 @@ export default {
   components: {
     AdminPostForm,
   },
-  data() {
-    return {
-      loadedPost: {
-        author: "DDH",
-        title: "My awesome Post",
-        content: "Super amazing, thanks for that!",
-        thumbnailLink: "/Shutter.Island.jpg",
-      },
-    };
+  asyncData(context) {
+    return axios
+      .get(
+        `https://nuxt-blog-57595-default-rtdb.firebaseio.com/posts/${context.params.postId}.json`
+      )
+      .then((res) => {
+        return {
+          loadedPost: res.data,
+        };
+      })
+      .catch((err) => context.error(err));
   },
 };
 </script>

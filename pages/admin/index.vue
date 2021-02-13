@@ -7,22 +7,27 @@
     </section>
     <section class="existing-posts">
       <h1>Existing Posts</h1>
-      <PostList :isAdmin="true" />
+      <PostList :isAdmin="true" :posts="loadedPosts" />
     </section>
   </div>
 </template>
 
-<script lang="ts">
-import Vue from "vue";
+<script>
 import PostList from "@/components/Posts/PostList.vue";
 import AppButton from "@/components/UI/AppButton.vue";
-export default Vue.extend({
+
+export default {
   layout: "admin",
   components: {
     PostList,
     AppButton,
   },
-});
+  computed: {
+    loadedPosts(state) {
+      return this.$store.getters.loadedPosts;
+    },
+  },
+};
 </script>
 
 <style scope>

@@ -15,24 +15,17 @@ export default Vue.extend({
   components: {
     PostList,
   },
-  data() {
-    return {
-      loadedPosts: [
-        {
-          id: "1",
-          title: "First Post",
-          previewText: "This is our first post!",
-          thumbnail: "/Shutter.Island.jpg",
-        },
-        {
-          id: "2",
-          title: "Second Post",
-          previewText: "This is our second post!",
-          thumbnail: "/Shutter.Island.jpg",
-        },
-      ],
-    };
+  computed: {
+    loadedPosts() {
+      return this.$store.getters.loadedPosts;
+    },
   },
+  // data() {
+  //   return {
+  //     loadedPosts: [] as any,
+  //   };
+  // },
+  // created() {},
 });
 </script>
 
