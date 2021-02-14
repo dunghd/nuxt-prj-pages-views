@@ -48,13 +48,17 @@ const createStore = () => {
           .catch((err) => console.log(err));
       },
       editPost(vuexContext, editedPost) {
+        const updatedPost = {
+          ...editedPost,
+          updatedDate: new Date()
+        };
         return axios
           .put(
             `${process.env.baseUrl}/posts/${editedPost.id}.json`,
-            editedPost
+            updatedPost
           )
           .then(res => {
-            vuexContext.commit('editPost', editedPost);
+            vuexContext.commit('editPost', updatedPost);
           })
           .catch((err) => console.log(err));
       },
