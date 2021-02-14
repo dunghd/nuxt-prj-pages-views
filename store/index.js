@@ -22,7 +22,7 @@ const createStore = () => {
     },
     actions: {
       nuxtServerInit(vuexContext, context) {
-        return axios.get(`https://nuxt-blog-57595-default-rtdb.firebaseio.com/posts.json`)
+        return axios.get(`${process.env.baseUrl}/posts.json`)
           .then(res => {
             const postsArray = [];
             for (const key in res.data) {
@@ -39,7 +39,7 @@ const createStore = () => {
         };
         return axios
           .post(
-            "https://nuxt-blog-57595-default-rtdb.firebaseio.com/posts.json",
+            `${process.env.baseUrl}com/posts.json`,
             createdPosts
           )
           .then(res => {
@@ -50,7 +50,7 @@ const createStore = () => {
       editPost(vuexContext, editedPost) {
         return axios
           .put(
-            `https://nuxt-blog-57595-default-rtdb.firebaseio.com/posts/${editedPost.id}.json`,
+            `${process.env.baseUrl}/posts/${editedPost.id}.json`,
             editedPost
           )
           .then(res => {
