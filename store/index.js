@@ -3,7 +3,8 @@ import Vuex from 'vuex';
 const createStore = () => {
   return new Vuex.Store({
     state: {
-      loadedPosts: []
+      loadedPosts: [],
+      token: null
     },
     mutations: {
       setPosts(state, posts) {
@@ -17,6 +18,12 @@ const createStore = () => {
           post => post.id === editedPost.id
         );
         state.loadedPosts[postIndex] = editedPost;
+      },
+      setToken(state, token) {
+        state.token = token;
+      },
+      clearToken(state) {
+        state.token = null;
       }
     },
     actions: {
@@ -39,7 +46,7 @@ const createStore = () => {
         };
         return this.$axios
           .$post(
-            `/posts.json`,
+            `/posts.json?auth=${vuexContext.state.token}`,
             createdPosts
           )
           .then(data => {
@@ -54,7 +61,7 @@ const createStore = () => {
         };
         return this.$axios
           .$put(
-            `/posts/${editedPost.id}.json`,
+            `/posts/${editedPost.id}.json?auth=${vuexContext.state.token}`,
             updatedPost
           )
           .then(data => {
@@ -64,11 +71,50 @@ const createStore = () => {
       },
       setPosts(vuexContext, posts) {
         vuexContext.commit('setPosts', posts);
+      },
+      authenticateUser(vuexContext, authData) {
+        const authUrl = authData.isLogin
+          ? `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${process.env.fbAPIKey}`
+          : `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${process.env.fbAPIKey}`;
+
+        return this.$axios
+          .$post(authUrl, {
+            email: authData.email,
+            password: authData.password,
+            returnSecureToken: true,
+          })
+          .then((result) => {
+            vuexContext.commit('setToken', result.idToken);
+            localStorage.setItem('token', result.idToken);
+            localStorage.setItem('tokenExpiration', new Date().getTime() + result.expiresIn * 1000);
+            vuexContext.dispatch('setLogoutTimer', result.expiresIn * 1000);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      },
+      setLogoutTimer(vuexContext, duration) {
+        setTimeout(() => {
+          vuexContext.commit('clearToken')
+        }, duration);
+      },
+      initAuth(vuexContext) {
+        const token = localStorage.getItem('token');
+        const expirationDate = localStorage.getItem('tokenExpiration');
+
+        if (new Date().getTime() > +expirationDate || !token) {
+          return;
+        }
+        vuexContext.dispatch('setLogoutTimer', +expirationDate - new Date().getTime())
+        vuexContext.commit('setToken', token);
       }
     },
     getters: {
       loadedPosts(state) {
         return state.loadedPosts;
+      },
+      isAuthenticated(state) {
+        return state.token != null;
       }
     }
   });
